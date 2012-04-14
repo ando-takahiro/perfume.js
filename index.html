@@ -54,11 +54,10 @@
     <div id="container"></div>
 
     <script type="text/javascript">
-      var stats, scene, renderer, camera, mesh, motionMan;
+      var stats, scene, renderer, camera, girls = [];
 
       if (!init()) {
         TWEEN.start();
-        animate();
       }
 
       // init the scene
@@ -90,10 +89,12 @@
       });
 
       // animation loop
+      var cnt = 0;
       function animate() {
-        if (mesh) {
-          mesh.rotation.y += 0.01;
-        }
+        cnt += 1.0 / 60;
+        _.each(girls, function(man) {
+          man.update(cnt);
+        });
 
         // loop on request animation loop
         // - it has to be at the begining of the function
@@ -119,10 +120,10 @@
       function setupEnv() {
         if( Detector.webgl ){
           renderer = new THREE.WebGLRenderer({
-            antialias		: true,	// to get smoother output
-            preserveDrawingBuffer	: true	// to allow screenshot
+            antialias: true,	// to get smoother output
+            preserveDrawingBuffer: true	// to allow screenshot
           });
-          renderer.setClearColorHex( 0xBBBBBB, 1 );
+          renderer.setClearColorHex(0xFFFFFF, 1);
         }else{
           renderer = new THREE.CanvasRenderer();
         }
@@ -141,8 +142,8 @@
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 80, 85);
-        camera.lookAt(new THREE.Vector3(0, 10, 0));
+        camera.position.set(0, 300, 305);
+        camera.lookAt(new THREE.Vector3(0, 100, 0));
         scene.add(camera);
 
         // Light
@@ -166,10 +167,21 @@
           }
         }
 
-        motionMan = new perfume.MotionMan('bvhfiles/kashiyuka.bvh', function() {
-          mesh = motionMan.bvh.rootBone;
-          scene.add(mesh);
-        });
+        _.each(
+          [
+            'bvhfiles/aachan.bvh',
+            'bvhfiles/kashiyuka.bvh',
+            'bvhfiles/nocchi.bvh'
+          ],
+          function(p, index, cont) {
+            var girl = new perfume.MotionMan(p, function() {
+              scene.add(girl.bvh.rootBone);
+              girls.push(girl);
+              if (girls.length >= cont.length) {
+                animate();
+              }
+            });
+          });
       }
 
     </script>

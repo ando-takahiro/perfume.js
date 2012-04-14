@@ -118,9 +118,9 @@ var perfume = (function() {
 
     currentLine++;
     var _numFrames = this.lines[currentLine].numFrames;
-    _bvh.numFramesInternal = _numFrames;
+    _bvh.numFrames = _numFrames;
     currentLine++;
-    _bvh.frameTimeInternal = this.lines[currentLine].frameTime;
+    _bvh.frameTime = this.lines[currentLine].frameTime;
     currentLine++;
 
     var _frames = [];
@@ -131,7 +131,7 @@ var perfume = (function() {
     }
     _bvh.frames = _frames;
 
-    _numFrames = _bvh.numFramesInternal = _frames.length;
+    _numFrames = _bvh.numFrames = _frames.length;
   }
 
   BvhParser.prototype.parseBone = function(_bones) {
@@ -198,6 +198,10 @@ var perfume = (function() {
     this.rootBone = null;
   };
 
+  function toRadian(theta) {
+    return theta / 180 * Math.PI;
+  }
+
   Bvh.prototype.gotoFrame = function(_frame) {
     if (!this.isLoop) {
       if (_frame >= this.numFrames) _frame = this.numFrames-1;
@@ -213,7 +217,30 @@ var perfume = (function() {
       l = _bone.numChannels;
       for ( i=0; i<l; i++ ) {
         if ( count < numFrame ) {
-          _bone[_bone.channels[i]] = frame[count];
+          var c = _bone.channels[i],
+              v = frame[count];
+          switch (c) {
+          case 'Xposition':
+            _bone.position.x = v;
+            break;
+          case 'Yposition':
+            _bone.position.y = v;
+            break;
+          case 'Zposition':
+            _bone.position.z = v;
+            break;
+          case 'Xrotation':
+            _bone.rotation.x = toRadian(v);
+            break;
+          case 'Yrotation':
+            _bone.rotation.y = toRadian(v);
+            break;
+          case 'Zrotation':
+            _bone.rotation.z = toRadian(v);
+            break;
+          default:
+            throw new Error('unknown animation channel:' + c);
+          }
           count++;
         }
       }
@@ -270,7 +297,7 @@ var perfume = (function() {
   MotionMan.prototype.update = function(_time) {
     if ( !this.bvh ) return;
     //frame of BVH
-    this.bvh.gotoFrame( _time/(this.bvh.frameTime*1000) );
+    this.bvh.gotoFrame(Math.floor(_time/(this.bvh.frameTime)));
 
     //calculate joint's position
     //var a:Array = [];
