@@ -54,25 +54,39 @@
     <div id="container"></div>
 
     <script type="text/javascript">
-      var stats, scene, renderer, camera, girls = [];
+      var stats, scene, renderer, camera, girls = [], music;
+
+      init();
 
       // init the scene
       function init(){
         setupEnv();
-        setupModel();
+        loadAudio(['./sound/Perfume_globalsite_sound.mp3'], function(audio) {
+          music = audio;
+          setupModel();
+        });
       }
 
       // animation loop
-      var clock;
+      var clock, lastLoopCount = 0;
       function animate() {
         if (!clock) {
           clock = new THREE.Clock();
+          music.play();
         }
 
-        var elapsedTime = clock.getElapsedTime();
+        var elapsedTime = clock.getElapsedTime(),
+            loopCount = Math.floor(elapsedTime / (girls[0].frameTime * girls[0].numFrames));
+
         _.each(girls, function(g) {
           g.update(elapsedTime);
         });
+
+        if (lastLoopCount !== loopCount) {
+          music.load();
+          music.play();
+        }
+        lastLoopCount = loopCount;
 
         // loop on request animation loop
         // - it has to be at the begining of the function
@@ -130,26 +144,22 @@
         scene.add(directionalLight);
       }
 
-			//var Sound = function ( sources, radius, volume ) {
+      function loadAudio(sources, ready) {
+        var audio = document.createElement('audio');
 
-			//	var audio = document.createElement( 'audio' );
+        for (var i = 0; i < sources.length; ++i) {
+          var source = document.createElement('source');
+          source.src = sources[i];
+          audio.appendChild(source);
+        }
 
-			//	for ( var i = 0; i < sources.length; i ++ ) {
-
-			//		var source = document.createElement( 'source' );
-			//		source.src = sources[ i ];
-
-			//		audio.appendChild( source );
-
-			//	}
-
-			//	this.position = new THREE.Vector3();
-
-			//	this.play = function () {
-
-			//		audio.play();
-
-			//	}
+        audio.autoplay = false;
+        audio.loop = true;
+        audio.addEventListener("canplaythrough", function () {
+          ready(audio);
+        });
+        audio.load();
+      };
 
       function setupModel() {
         function dump(n, depth) {

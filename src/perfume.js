@@ -229,7 +229,12 @@ var perfume = (function() {
   };
 
   Bvh.prototype.update = function(_time) {
-    this.gotoFrame(Math.floor(_time/(this.frameTime)));
+    var frame = Math.floor(_time/(this.frameTime)), isLooped = false;
+    if (this.isLoop && frame >= this.numFrames) {
+      isLooped = true;
+    }
+    this.gotoFrame(frame);
+    return isLooped;
   };
 
   exports.load = function(_path, _fn) {// load bvh and parse
