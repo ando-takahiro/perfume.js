@@ -44,7 +44,6 @@
     <script src="vendor/three.js/Stats.js"></script>
 
     <script src="vendor/jquery-1.7.1.min.js"></script>
-    <script src="vendor/Tween.js"></script>
     <script src="vendor/underscore-min.js"></script>
     <script src="vendor/mustache.min.js"></script>
 
@@ -57,10 +56,6 @@
     <script type="text/javascript">
       var stats, scene, renderer, camera, girls = [];
 
-      if (!init()) {
-        TWEEN.start();
-      }
-
       // init the scene
       function init(){
         setupEnv();
@@ -68,11 +63,15 @@
       }
 
       // animation loop
-      var cnt = 0;
+      var clock;
       function animate() {
-        cnt += 1.0 / 60;
+        if (!clock) {
+          clock = new THREE.Clock();
+        }
+
+        var elapsedTime = clock.getElapsedTime();
         _.each(girls, function(g) {
-          g.update(cnt);
+          g.update(elapsedTime);
         });
 
         // loop on request animation loop
@@ -130,6 +129,27 @@
         directionalLight.position.set(0, -70, 100).normalize();
         scene.add(directionalLight);
       }
+
+			//var Sound = function ( sources, radius, volume ) {
+
+			//	var audio = document.createElement( 'audio' );
+
+			//	for ( var i = 0; i < sources.length; i ++ ) {
+
+			//		var source = document.createElement( 'source' );
+			//		source.src = sources[ i ];
+
+			//		audio.appendChild( source );
+
+			//	}
+
+			//	this.position = new THREE.Vector3();
+
+			//	this.play = function () {
+
+			//		audio.play();
+
+			//	}
 
       function setupModel() {
         function dump(n, depth) {
