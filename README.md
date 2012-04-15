@@ -6,13 +6,9 @@ you can check [here](http://ando-takahiro.github.com/perfume.js/).
 
 ## Be careful!
 
- * synchronize between music and motion is broken
- * not js style code
- * no free camera
- * no ground
  * load time is too long
- * checked on mac os x chrome & safari
- * does not run on iPad
+ * checked only on mac os x chrome & safari
+ * see [issues](https://github.com/ando-takahiro/perfume.js/issues?sort=created&direction=desc&state=open)
 
 ## Hacking
 
