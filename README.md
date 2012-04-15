@@ -2,7 +2,7 @@
 
 @syoyo requests me [perfume bvh demo](http://perfume-dev.github.com/) using three.js. So I made it based on [flash-example](https://github.com/perfume-dev/example-flash)
 
-you can check [here](http://ando-takahiro.github.com/perfume.js/).
+You can check [here](http://ando-takahiro.github.com/perfume.js/).
 
 ## Be careful!
 
@@ -25,4 +25,4 @@ MIT
 
 ## Link
 
-You should get original bvh data from [http://www.perfume-global.com](http://www.perfume-global.com).
+You should get music & bvh data from [http://www.perfume-global.com](http://www.perfume-global.com).
