@@ -135,13 +135,8 @@ var perfume = (function() {
   }
 
   BvhParser.prototype.parseBone = function(_bones) {
-		var materials = [];
-		for ( var i = 0; i < 6; i ++ ) {
-			materials.push( new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff } ) );
-		}
-
     var bone = new THREE.Mesh(
-      new THREE.CubeGeometry(2, 2, 2, 1, 1, 1, materials), new THREE.MeshFaceMaterial()
+      new THREE.CubeGeometry(2, 2, 2), new THREE.MeshBasicMaterial({color: Math.random() * 0xffffff})
     );
     _bones.push(bone);
     bone.name = this.lines[this.currentLine].boneName;
@@ -247,33 +242,6 @@ var perfume = (function() {
     });
   };
 
-  function generateSprite() {
-    var canvas = document.createElement( 'canvas' );
-    canvas.width = 16;
-    canvas.height = 16;
-
-    var context = canvas.getContext( '2d' );
-    var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
-    gradient.addColorStop( 0, 'rgba(255,255,255,1)' );
-    gradient.addColorStop( 0.2, 'rgba(0,255,255,1)' );
-    gradient.addColorStop( 0.4, 'rgba(0,0,64,1)' );
-    gradient.addColorStop( 1, 'rgba(0,0,0,1)' );
-
-    context.fillStyle = gradient;
-    context.fillRect( 0, 0, canvas.width, canvas.height );
-
-    return canvas;
-  }
-
-  function makeMaterial() {
-    return new THREE.ParticleBasicMaterial({
-      //map: new THREE.Texture(generateSprite()),
-      color: 0xFF2222FF,
-      size: 10,
-      blending: THREE.AdditiveBlending
-    });
-  }
-
   function MotionMan(_path, after){
     this.load(_path, after);
   }
@@ -298,73 +266,7 @@ var perfume = (function() {
     if ( !this.bvh ) return;
     //frame of BVH
     this.bvh.gotoFrame(Math.floor(_time/(this.bvh.frameTime)));
-
-    //calculate joint's position
-    //var a:Array = [];
-    //for each (var bone:BvhBone in this.bvh.bones) {
-    //  var _p0:BvhBone = bone;
-    //  var matrix:Matrix3D = new Matrix3D();
-    //  calcBonePosition(bone, matrix);
-    //  a.push(_p0, matrix.position.x, matrix.position.y - 70, -matrix.position.z);
-
-    //  if ( _p0.isEnd ) {// endSite
-    //    bone = _p0;
-    //    matrix.identity();
-    //    matrix.appendTranslation(bone.endOffsetX, bone.endOffsetY, -bone.endOffsetZ);
-    //    calcBonePosition(bone, matrix);
-    //    a.push(_p0, matrix.position.x, matrix.position.y - 70, -matrix.position.z);
-    //  }
-    //}
-
-    //// re-position
-    //var i:int = 0;
-    //var l:int = a.length/4;
-    //var sp:Sprite;
-    //for ( i = 0; i<l; i++ ) {
-    //  sp = this.circles[i];
-    //  sp.x = a[i*4+1] * 2;
-    //  sp.y = -a[i*4+2] * 2;
-    //  sp.z = a[i*4+3] * 2 + 200;
-    //}
-    //drawLines(this.target, a);
   };
 
-  //private function drawLines(_target:Sprite, a:Array):void{
-  //  var i:int = 0;
-  //  var l:int = a.length;
-  //  var sp:Sprite;
-  //  var sp2:Sprite;
-  //  var pt:Point;
-  //  var pt2:Point;
-  //  var _b:BvhBone;
-  //  var _b2:BvhBone;
-  //  var _index:int;
-  //  const ZERO:Point = new Point();
-  //  for ( i=0; i<l; i+=4 ){
-  //    _b = a[i];
-  //    sp = this.circles[i / 4];
-  //    pt = sp.localToGlobal(ZERO);
-  //    if ( _b.children.length > 0 ){
-  //      for each ( _b2 in _b.children ) {
-  //        _index = a.indexOf(_b2);
-  //        sp2 = this.circles[_index / 4];
-  //        pt2 = sp2.localToGlobal(ZERO);
-  //        _target.graphics.lineStyle(1, 0x777777);
-  //        _target.graphics.moveTo(pt.x - _target.x, pt.y - _target.y);
-  //        _target.graphics.lineTo(pt2.x - _target.x, pt2.y - _target.y);
-  //      }
-  //    } else if ( _b.isEnd ) {
-  //      _b2 = a[i+4];
-  //      if ( _b == _b2 ) {
-  //        _index = i+4;
-  //        sp2 = this.circles[_index / 4];
-  //        pt2 = sp2.localToGlobal(ZERO);
-  //        _target.graphics.lineStyle(1, 0x00AAFF);
-  //        _target.graphics.moveTo(pt.x - _target.x, pt.y - _target.y);
-  //        _target.graphics.lineTo(pt2.x - _target.x, pt2.y - _target.y);
-  //      }
-  //    }
-  //  }
-  //}
   return exports;
 })();
