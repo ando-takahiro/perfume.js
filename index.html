@@ -1,1 +1,201 @@
-hello
+<!doctype html>
+<html>
+  <head>
+    <title>perfume.js</title>
+
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="utf-8">
+
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+
+      @media screen {
+        body {
+          height: 100%;
+        }
+      }
+
+      @media only screen and (max-device-width:480px) {
+        body {
+          width: 320px;
+          height: 460px;
+        }
+      }
+
+      @media only screen and (device-width: 768px) {
+        body {
+          width: 1024px;
+          height: 768px;
+        }
+      }
+
+      body {
+        overflow: hidden;
+        color: white;
+        background-color: black; 
+      }
+    </style>
+
+    <script src="vendor/three.js/Three.js"></script>
+    <script src="vendor/three.js/Detector.js"></script>
+    <script src="vendor/three.js/Stats.js"></script>
+
+    <script src="vendor/jquery-1.7.1.min.js"></script>
+    <script src="vendor/underscore-min.js"></script>
+    <script src="vendor/mustache.min.js"></script>
+
+    <script src="src/perfume.js"></script>
+  </head>
+  <body>
+    <!-- three.js container -->
+    <div id="container"></div>
+
+    <script type="text/javascript">
+      var stats, scene, renderer, camera, girls = [], music;
+
+      init();
+
+      // init the scene
+      function init(){
+        setupEnv();
+        loadAudio(['./audio/Perfume_globalsite_sound.mp3'], function(audio) {
+          music = audio;
+          setupModel();
+        });
+      }
+
+      // animation loop
+      var clock, lastLoopCount = 0;
+      function animate() {
+        if (!clock) {
+          clock = new THREE.Clock();
+          music.play();
+        }
+
+        var elapsedTime = clock.getElapsedTime(),
+            loopCount = Math.floor(elapsedTime / (girls[0].frameTime * girls[0].numFrames));
+
+        _.each(girls, function(g) {
+          g.update(elapsedTime);
+        });
+
+        if (lastLoopCount !== loopCount) {
+          music.load();
+          music.play();
+        }
+        lastLoopCount = loopCount;
+
+        // loop on request animation loop
+        // - it has to be at the begining of the function
+        // - see details at http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+        requestAnimationFrame(animate);
+
+        // do the render
+        render();
+
+        // update stats
+        stats.update();
+      }
+
+      // render the scene
+      function render() {
+        // actually render the scene
+        renderer.render(scene, camera);
+      }
+
+      //
+      // setuppers
+      //
+      function setupEnv() {
+        if( Detector.webgl ){
+          renderer = new THREE.WebGLRenderer({
+            antialias: true,	// to get smoother output
+            preserveDrawingBuffer: true	// to allow screenshot
+          });
+        }else{
+          renderer = new THREE.CanvasRenderer();
+        }
+        renderer.setClearColorHex(0x0, 1);
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('container').appendChild(renderer.domElement);
+
+        // add Stats.js - https://github.com/mrdoob/stats.js
+        stats = new Stats();
+        stats.domElement.style.position	= 'absolute';
+        stats.domElement.style.bottom	= '0px';
+        document.body.appendChild(stats.domElement);
+
+        // create a scene
+        scene = new THREE.Scene();
+
+        // put a camera in the scene
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
+        camera.position.set(0, 300, 305);
+        camera.lookAt(new THREE.Vector3(0, 100, 0));
+        scene.add(camera);
+
+        // Light
+        var directionalLight = new THREE.DirectionalLight(0xffeedd);
+        directionalLight.position.set(0, -70, 100).normalize();
+        scene.add(directionalLight);
+      }
+
+      function loadAudio(sources, ready) {
+        var audio = document.createElement('audio');
+
+        for (var i = 0; i < sources.length; ++i) {
+          var source = document.createElement('source');
+          source.src = sources[i];
+          audio.appendChild(source);
+        }
+
+        audio.autoplay = false;
+        audio.loop = true;
+        audio.addEventListener("canplaythrough", function () {
+          ready(audio);
+        });
+        audio.load();
+      };
+
+      function setupModel() {
+        function dump(n, depth) {
+          var indent = '';
+          (function() {
+            for (var i = 0; i < depth; ++i) {
+              indent += ' ';
+            }
+          })();
+          console.log(indent, n.name);
+
+          for (var i = 0; i < n.children.length; ++i) {
+            dump(n.children[i], depth + 1);
+          }
+        }
+
+        _.each(
+          [
+            {path: 'bvhfiles/aachan.bvh', color: 0xFF3333},
+            {path: 'bvhfiles/kashiyuka.bvh', color: 0x33FF33},
+            {path: 'bvhfiles/nocchi.bvh', color: 0x3333FF}
+          ],
+          function(def, index, cont) {
+            perfume.load(def.path, def.color, function(girl) {
+              scene.add(girl.rootBone);
+              girls.push(girl);
+              if (girls.length >= cont.length) {
+                animate();
+              }
+            });
+          });
+      }
+
+    </script>
+
+<a href="http://www.perfume-global.com/" style='position: absolute; top: 0; left: 0; border: 0;'>Originl bvh data is here</a>
+<a href="http://github.com/ando-takahiro/perfume.js"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/e6bef7a091f5f3138b8cd40bc3e114258dd68ddf/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub"></a>
+  </body>
+</html>
