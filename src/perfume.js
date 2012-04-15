@@ -2,17 +2,12 @@ var perfume = (function() {
   var exports = {};
 
   function BvhLine(_str) {
-    //this.lineType;
-    //this.boneType;
-    //this.boneName;
     this.offsetX = 0;
     this.offsetY = 0;
     this.offsetZ = 0;
     this.numChannels = 0;
-    //this.channelsProps = [];
     this.numFrames = 0;
     this.frameTime = 0;
-    //this.frames = [];
 
     this.parse(_str);
   }
@@ -101,9 +96,6 @@ var perfume = (function() {
   };
 
   function BvhParser(_bvh, _str, _material) {
-    //this.lines:Vector.<BvhLine>
-    //this.currentLine:uint;
-
     this.lines = _.map(_str.split("\n"), function(_line_str) {
       return new BvhLine(_line_str);
     });
@@ -187,12 +179,6 @@ var perfume = (function() {
     new BvhParser(this, _str);
   }
 
-  Bvh.prototype.destroy = function() {
-    this.bones = null;
-    this.frames = null;
-    this.rootBone = null;
-  };
-
   function toRadian(theta) {
     return theta / 180 * Math.PI;
   }
@@ -242,30 +228,16 @@ var perfume = (function() {
     });
   };
 
-  function MotionMan(_path, after){
-    this.load(_path, after);
-  }
-
-  exports.MotionMan = MotionMan;
-
-  MotionMan.prototype.destroy = function() {
-    if ( this.bvh ) this.bvh.destroy();
-    this.bvh = null;
+  Bvh.prototype.update = function(_time) {
+    this.gotoFrame(Math.floor(_time/(this.frameTime)));
   };
 
-  MotionMan.prototype.load = function(_path, _fn) {// load bvh and parse
-    var that = this;
+  exports.load = function(_path, _fn) {// load bvh and parse
     $.get(_path, function(data) {
-      that.bvh = new Bvh(String(data));
-      that.bvh.isLoop = true;
-      if (_fn) _fn();
+      var bvh = new Bvh(String(data));
+      bvh.isLoop = true;
+      if (_fn) _fn(bvh);
     });
-  };
-
-  MotionMan.prototype.update = function(_time) {
-    if ( !this.bvh ) return;
-    //frame of BVH
-    this.bvh.gotoFrame(Math.floor(_time/(this.bvh.frameTime)));
   };
 
   return exports;
