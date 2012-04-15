@@ -178,12 +178,12 @@
 
         _.each(
           [
-            'bvhfiles/aachan.bvh',
-            'bvhfiles/kashiyuka.bvh',
-            'bvhfiles/nocchi.bvh'
+            {path: 'bvhfiles/aachan.bvh', color: 0xFF3333},
+            {path: 'bvhfiles/kashiyuka.bvh', color: 0x33FF33},
+            {path: 'bvhfiles/nocchi.bvh', color: 0x3333FF}
           ],
-          function(p, index, cont) {
-            perfume.load(p, function(girl) {
+          function(def, index, cont) {
+            perfume.load(def.path, def.color, function(girl) {
               scene.add(girl.rootBone);
               girls.push(girl);
               if (girls.length >= cont.length) {

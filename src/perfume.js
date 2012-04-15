@@ -95,7 +95,8 @@ var perfume = (function() {
     }
   };
 
-  function BvhParser(_bvh, _str, _material) {
+  function BvhParser(_bvh, _str, _color) {
+    this.color = _color;
     this.lines = _.map(_str.split("\n"), function(_line_str) {
       return new BvhLine(_line_str);
     });
@@ -128,7 +129,7 @@ var perfume = (function() {
 
   BvhParser.prototype.parseBone = function(_bones) {
     var bone = new THREE.Mesh(
-      new THREE.CubeGeometry(2, 2, 2), new THREE.MeshBasicMaterial({color: Math.random() * 0xffffff})
+      new THREE.CubeGeometry(2, 2, 2), new THREE.MeshBasicMaterial({color: this.color})
     );
     _bones.push(bone);
     bone.name = this.lines[this.currentLine].boneName;
@@ -172,11 +173,11 @@ var perfume = (function() {
   };	
 
 
-  function Bvh(_str) {
+  function Bvh(_str, color) {
     this.bones = [];
     this.isLoop = false;
 
-    new BvhParser(this, _str);
+    new BvhParser(this, _str, color);
   }
 
   function toRadian(theta) {
@@ -237,9 +238,9 @@ var perfume = (function() {
     return isLooped;
   };
 
-  exports.load = function(_path, _fn) {// load bvh and parse
+  exports.load = function(_path, _color, _fn) {// load bvh and parse
     $.get(_path, function(data) {
-      var bvh = new Bvh(String(data));
+      var bvh = new Bvh(String(data), _color);
       bvh.isLoop = true;
       if (_fn) _fn(bvh);
     });
