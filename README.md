@@ -4,6 +4,12 @@
 
 you can check [here](http://ando-takahiro.github.com/perfume.js/).
 
+## Be careful!
+
+ * load time is too much long
+ * checked on mac os x chrome & safari
+ * does not run on iPad
+
 ## License
 
 MIT
