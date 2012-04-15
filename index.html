@@ -67,28 +67,6 @@
         setupModel();
       }
 
-      // camera
-      // TODO: improve this
-      var lastX, lastY, isDragging;
-      document.addEventListener('mousedown', function(event) {
-        isDragging = true;
-        lastX = event.clientX;
-        lastY = event.clientY;
-      });
-      document.addEventListener('mousemove', function(event) {
-        if (isDragging) {
-          var s = 2;
-
-          camera.position.x += (event.clientX - lastX) / window.innerWidth * s;
-          camera.position.y += (event.clientY - lastY) / window.innerHeight * s;
-
-          camera.lookAt(scene.position);
-        }
-      });
-      document.addEventListener('mouseup', function(event) {
-        isDragging = false;
-      });
-
       // animation loop
       var cnt = 0;
       function animate() {
