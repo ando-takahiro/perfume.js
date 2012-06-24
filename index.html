@@ -114,7 +114,6 @@
         camera.position.z = RADIUS * Math.cos(theta) * Math.cos(phi);
         camera.lookAt(new THREE.Vector3(0, 100, 0));
         camera.updateMatrix();
-        console.log('uc', theta, phi);
       }
       document.addEventListener('mousedown', function(event) {
         isDragging = true;
