@@ -54,7 +54,8 @@
     <div id="container"></div>
 
     <script type="text/javascript">
-      var stats, scene, renderer, camera, girls = [], music;
+      var stats, scene, renderer, camera, girls = [], music,
+          lastX, lastY, isDragging, theta = -Math.PI * 3 / 4, phi = Math.PI / 6;
 
       init();
 
@@ -105,6 +106,37 @@
         renderer.render(scene, camera);
       }
 
+      // rotate camera with mouse
+      function updateCamera() {
+        var RADIUS = 650;
+        camera.position.x = RADIUS * Math.sin(theta) * Math.cos(phi);
+        camera.position.y = RADIUS * Math.sin(phi);
+        camera.position.z = RADIUS * Math.cos(theta) * Math.cos(phi);
+        camera.lookAt(new THREE.Vector3(0, 100, 0));
+        camera.updateMatrix();
+        console.log('uc', theta, phi);
+      }
+      document.addEventListener('mousedown', function(event) {
+        isDragging = true;
+        lastX = event.clientX;
+        lastY = event.clientY;
+      });
+      document.addEventListener('mousemove', function(event) {
+        if (camera && isDragging) {
+          var SPEED = 0.01;
+          theta -= (event.clientX - lastX) * SPEED;
+          phi += (event.clientY - lastY) * SPEED;
+
+          phi = Math.min(Math.PI / 2, Math.max(-Math.PI / 2, phi));
+          updateCamera();
+        }
+        lastX = event.clientX;
+        lastY = event.clientY;
+      });
+      document.addEventListener('mouseup', function(event) {
+        isDragging = false;
+      });
+
       //
       // setuppers
       //
@@ -133,8 +165,7 @@
 
         // put a camera in the scene
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.position.set(0, 300, 305);
-        camera.lookAt(new THREE.Vector3(0, 100, 0));
+        updateCamera();
         scene.add(camera);
 
         // Light
