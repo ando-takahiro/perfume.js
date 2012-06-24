@@ -131,6 +131,7 @@ var perfume = (function() {
     var bone = new THREE.Mesh(
       new THREE.CubeGeometry(2, 2, 2), new THREE.MeshBasicMaterial({color: this.color})
     );
+    bone.eulerOrder = 'YXZ';
     _bones.push(bone);
     bone.name = this.lines[this.currentLine].boneName;
 

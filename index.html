@@ -55,7 +55,7 @@
 
     <script type="text/javascript">
       var stats, scene, renderer, camera, girls = [], music,
-          lastX, lastY, isDragging, theta = Math.PI / 4, phi = Math.PI / 4;
+          lastX, lastY, isDragging, theta = -Math.PI * 3 / 4, phi = Math.PI / 6;
 
       init();
 
@@ -108,7 +108,7 @@
 
       // rotate camera with mouse
       function updateCamera() {
-        var RADIUS = 600;
+        var RADIUS = 650;
         camera.position.x = RADIUS * Math.sin(theta) * Math.cos(phi);
         camera.position.y = RADIUS * Math.sin(phi);
         camera.position.z = RADIUS * Math.cos(theta) * Math.cos(phi);
